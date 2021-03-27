@@ -3,6 +3,7 @@
 #include<cstdlib>
 #include<cstring>
 #include<ctime>
+#include<fstream>
 using namespace std;
 
 #define One 49
@@ -11,7 +12,7 @@ using namespace std;
 #define Four 52
 #define Five 53
 
-char Co[11][16] = { "찬지리는은행","S1 Movie","MAXIM 신문","내 건설","" };
+char Co[11][16] = { "찬지리는 은행","S1 Movie","MAXIM 신문","내 건설","삼별 전자", "파슬라", "쿠키 제과", "폰중심", "씬 스틸","조선 조선" };
 int M[10] = { 0,0,0,0,0,0,0,0,0 };
 int Money = 10000;
 int Asset[10] = { 0,0,0,0,0,0,0,0,0 };
@@ -23,14 +24,18 @@ void Sell();
 void Check();
 void MyAsset();
 void Start();
+void OpenData();
+void CloseData();
 
 int main()
 {
 	char W;
-	Start();
+	OpenData();
+	std::system("title 패가망신 주식");
+	std::system("color F0");
 	for (;;)
 	{
-		cout << "무엇을 할지 선택해 주세요[ 1.구매 | 2.판매 | 3.시세(가격변경) | 4.보유주식 | 5.종료 ]: ";
+		cout << "무엇을 할지 선택해 주세요[ 1.구매 | 2.판매 | 3.시세(가격변경) | 4.보유주식 | 5.종료 및 저장 ]: ";
 		cin >> W;
 		if (W == One)
 		{
@@ -51,11 +56,12 @@ int main()
 		}
 		else if (W == Five)
 		{
-			cout << "게임을 종료합니다." << endl;
+			cout << "게임을 종료 및 저장 합니다." << endl;
 			break;
 		}
-		system("cls");
+		std::system("cls");
 	}
+	CloseData();
 }
 
 void Check()
@@ -180,4 +186,74 @@ void Start()
 		int NUM = (rand() % 3000 + 500);
 		M[i] = M[i] + NUM;
 	}
+}
+
+void OpenData()
+{
+	ifstream File;
+	File.open("Money.dat");
+	File >> Money;
+	File.close();
+
+	ifstream As;
+	As.open("Asset.dat");
+	for (int i = 0; i <= 9; i++)
+	{
+		As >> Asset[i];
+	}
+	As.close();
+	if (M[1] > 0)
+	{
+		ifstream CM;
+		CM.open("CoMoney.dat");
+		for (int i = 0; i <= 9; i++)
+		{
+			CM >> M[i];
+		}
+		CM.close();
+	}
+	else if (M[1] == 0)
+	{
+		Start();
+	}
+
+	ifstream B;
+	B.open("BuyMoney.dat");
+	for (int i = 0; i <= 9; i++)
+	{
+		B >> BM[i];
+	}
+	B.close();
+}
+
+void CloseData()
+{
+	ofstream Mo;
+	Mo.open("Money.dat");
+	Mo << Money;
+	Mo.close();
+
+	ofstream As;
+	As.open("Asset.dat");
+	for (int i = 0; i <= 9; i++)
+	{
+		As << Asset[i] << endl;;
+	}
+	As.close();
+
+	ofstream CM;
+	CM.open("CoMoney.dat");
+	for (int i = 0; i <= 9; i++)
+	{
+		CM << M[i] << endl;;
+	}
+	CM.close();
+
+	ofstream B;
+	B.open("BuyMoney.dat");
+	for (int i = 0; i <= 9; i++)
+	{
+		B << BM[i] << endl;
+	}
+	B.close();
 }
