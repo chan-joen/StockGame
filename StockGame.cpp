@@ -9,11 +9,14 @@ using namespace std;
 #define Two 50
 #define Three 51
 #define Four 52
+#define Five 53
 
-char Co[11][16] = { "찬지리는은행","S1 Movie","" };
+char Co[11][16] = { "찬지리는은행","S1 Movie","MAXIM 신문","내 건설","" };
 int M[10] = { 0,0,0,0,0,0,0,0,0 };
-int Money = 0;
+int Money = 10000;
 int Asset[10] = { 0,0,0,0,0,0,0,0,0 };
+int BM[10] = { 0, };
+char S;
 
 void Buy();
 void Sell();
@@ -27,7 +30,7 @@ int main()
 	Start();
 	for (;;)
 	{
-		cout << "무엇을 할지 선택해 주세요[1.구매|2.판매|3.시세(가격변경)|4.보유주식]: ";
+		cout << "무엇을 할지 선택해 주세요[ 1.구매 | 2.판매 | 3.시세(가격변경) | 4.보유주식 | 5.종료 ]: ";
 		cin >> W;
 		if (W == One)
 		{
@@ -46,6 +49,12 @@ int main()
 		{
 			MyAsset();
 		}
+		else if (W == Five)
+		{
+			cout << "게임을 종료합니다." << endl;
+			break;
+		}
+		system("cls");
 	}
 }
 
@@ -56,41 +65,68 @@ void Check()
 	for (int i = 0; i <= 9; i++)
 	{
 		int J = rand() % 2 + 1;
-		if (J % 2 == 0 && M[i] <= 1000)
+		if (J % 2 == 0)
 		{
 			B = (rand() % 100 + 1);
-			M[i] += ((B / 100) * M[i]);
-			cout << Co[i] << "<" << M[i] << ">" << "(" << "+ %" << B << ")" << endl;
+			M[i] += round((0.001 * B) * M[i]);
+			if (M[i] < 100)
+			{
+				M[i] = 100;
+				B = 0;
+			}
+			else if (M[i] > 1000000)
+			{
+				M[i] = 1000000;
+				B = 0;
+			}
+			cout << i << "." << Co[i] << "<" << M[i] << ">" << "(" << "+" << (0.1 * B) << "%" << "[" << round((0.001 * B) * M[i]) << "]" << ")" << endl;
 		}
-		else if (M[i] >= 1000 || M[i] <= 100000)
+		else
 		{
 			B = (rand() % 90 + 1);
-			M[i] -= ((B / 100) * M[i]);
-			cout << Co[i] << "<" << M[i] << ">" << "(" << "- %" << (rand() % 90 + 1) << ")" << endl;
+			M[i] -= ((0.001 * B) * M[i]);
+			if (M[i] < 100)
+			{
+				M[i] = 100;
+				B = 0;
+			}
+			else if (M[i] > 1000000)
+			{
+				M[i] = 1000000;
+				B = 0;
+			}
+			cout << i << "." << Co[i] << "<" << M[i] << ">" << "(" << "-" << (0.1 * B) << "%" << "[" << round((0.001 * B) * M[i]) << "]" << ")" << endl;
 		}
 	}
+	cout << "넘어가려면 엔터를 누르세요.";
+	getchar();
+	cin >> S;
 }
 
 void MyAsset()
 {
 	int i;
+	int j;
 	cout << "보유금액: " << Money << endl;
 	for (i = 0; i <= 9; i++)
 	{
-		cout << Co[i] << "  " << Asset[i] << "개" << endl;
+		j = (Asset[i] * M[i]) - BM[i];
+		cout << Co[i] << "  " << Asset[i] << "개" << "[" << j << "]" << endl;
 	}
+	cout << "넘어가려면 엔터를 누르세요.";
+	getchar();
+	cin >> S;
 }
 
 void Buy()
 {
-	char* B = {};
+	int B;
 	int J;
-	cout << "살 주식의 이름을 입력하세요: ";
+	cout << "살 주식의 번호를 입력하세요: ";
 	cin >> B;
-	fflush(stdin);
 	for (int i = 0; i <= 9; i++)
 	{
-		if (strcmp(B, Co[i]) == 0)
+		if (B == i)
 		{
 			cout << "몇 주를 구입 하시겠습니까?: ";
 			cin >> J;
@@ -101,19 +137,23 @@ void Buy()
 			}
 			Asset[i] = Asset[i] + J;
 			Money -= J * M[i];
+			BM[i] += M[i] * J;
 		}
 	}
+	cout << "넘어가려면 엔터를 누르세요.";
+	getchar();
+	cin >> S;
 }
 
 void Sell()
 {
-	char* B = {};
+	int B;
 	int J;
-	cout << "팔 주식의 이름을 입력하세요: ";
+	cout << "팔 주식의 번호를 입력하세요: ";
 	cin >> B;
 	for (int i = 0; i <= 9; i++)
 	{
-		if (strcmp(B, Co[i]) == 0)
+		if (B == i)
 		{
 			cout << "몇 주를 판매 하시겠습니까?: ";
 			cin >> J;
@@ -124,8 +164,12 @@ void Sell()
 			}
 			Asset[i] = Asset[i] - J;
 			Money += J * M[i];
+			BM[i] = 0;
 		}
 	}
+	cout << "넘어가려면 엔터를 누르세요.";
+	getchar();
+	cin >> S;
 }
 
 void Start()
@@ -133,7 +177,7 @@ void Start()
 	srand((int)time(NULL));
 	for (int i = 0; i <= 9; i++)
 	{
-		int NUM = (rand() % 100000);
+		int NUM = (rand() % 3000 + 500);
 		M[i] = M[i] + NUM;
 	}
 }
