@@ -202,17 +202,17 @@ void OpenData()
 		As >> Asset[i];
 	}
 	As.close();
-	if (M[1] > 0)
+	ifstream CM;
+	CM.open("CoMoney.dat");
+	if (CM.is_open())
 	{
-		ifstream CM;
-		CM.open("CoMoney.dat");
 		for (int i = 0; i <= 9; i++)
 		{
 			CM >> M[i];
 		}
 		CM.close();
 	}
-	else if (M[1] == 0)
+	else
 	{
 		Start();
 	}
